@@ -1,0 +1,6 @@
+build/
+.cache
+
+*.qs2
+*.h5
+*.xdmf
