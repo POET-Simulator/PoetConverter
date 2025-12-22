@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(PoetToParaView LANGUAGES CXX)
+
+include(FetchContent)
+
+FetchContent_Declare(
+    tinyxml2
+    GIT_REPOSITORY https://github.com/leethomason/tinyxml2.git
+    GIT_TAG        11.0.0
+)
+
+FetchContent_Declare(
+  highfive
+  QUIET
+  GIT_REPOSITORY https://github.com/highfive-devs/highfive.git
+  GIT_TAG v3.2.0
+)
+
+FetchContent_MakeAvailable(tinyxml2)
+FetchContent_MakeAvailable(highfive)
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+find_package(RRuntime REQUIRED)
+
+add_executable(poet2paraview src/main.cpp)
+target_link_libraries(poet2paraview PRIVATE tinyxml2::tinyxml2 RRuntime HighFive::HighFive)
