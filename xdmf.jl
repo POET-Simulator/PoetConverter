@@ -6,7 +6,7 @@ h5_filename = "dolo_fgcs_3_skip.h5"
 xdmf_filename = "dolo_fgcs_3_skip.xmf"
 
 # Grid settings (Adjust these if your simulation has specific physical dimensions)
-# Assuming a 2D grid based on the 400x400 dimension in the image
+# Default values for a 2D grid with unit spacing
 origin = [0.0, 0.0]   # X, Y origin
 spacing = [1.0, 1.0]  # dx, dy
 
@@ -47,7 +47,7 @@ function create_xdmf()
     sample_ds_name = keys(first_group)[1]
     sample_ds = first_group[sample_ds_name]
     # HDF5.jl reads dims as (X, Y) usually, but XDMF writes "Y X" (row-major)
-    # The image shows "400 x 400".
+    # Extract dimensions from the dataset
     dims = size(sample_ds)
     # Format dimensions string for XDMF (reverse for standard C-order visualization if needed, 
     # but for 400x400 it looks the same. XDMF usually wants "NY NX")
@@ -124,7 +124,7 @@ function create_xdmf()
             data_item["Format"] = "HDF"
             data_item["Dimensions"] = dim_str
             # Precision can be detected, but 8 (double) or 4 (float) is standard. 
-            # The image says "64-bit floating-point", so precision is 8.
+            # Using 8 for 64-bit floating-point (double precision)
             data_item["NumberType"] = "Float"
             data_item["Precision"] = "8"
 
