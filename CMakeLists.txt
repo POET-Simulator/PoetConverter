@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 
 project(PoetToParaView LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -23,5 +26,9 @@ FetchContent_MakeAvailable(highfive)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 find_package(RRuntime REQUIRED)
 
-add_executable(poet2paraview src/main.cpp)
+add_executable(poet2paraview 
+  src/main.cpp 
+  src/SimFileList.cpp
+  src/Iteration.cpp
+)
 target_link_libraries(poet2paraview PRIVATE tinyxml2::tinyxml2 RRuntime HighFive::HighFive)
