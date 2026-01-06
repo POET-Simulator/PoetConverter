@@ -1,4 +1,3 @@
-#include "Iteration.hpp"
 #include "SimFileList.hpp"
 
 #include <print>
@@ -26,13 +25,12 @@ int main(int argc, char *argv[]) {
       std::println("  Iteration {}: {}", iterNum, filePath);
     }
 
-    // Example: Create Iteration objects
-    std::println("\nCreating Iteration objects:");
-    for (const auto &[iterNum, filePath] : iterFiles) {
-      Iteration iter(iterNum, filePath);
-      std::println("  Created Iteration #{}", iter.getIterationNumber());
-      // Later we can load data: iter.getSimData()
-    }
+    // // Example: Create Iteration objects
+    // std::println("\nCreating Iteration objects:");
+    // for (const auto &[iterNum, filePath] : iterFiles) {
+    //   std::println("  Created Iteration #{}", iterNum);
+    //   // Later we can load data: iter.getSimData()
+    // }
 
   } catch (const std::exception &e) {
     std::println(stderr, "Error: {}", e.what());
