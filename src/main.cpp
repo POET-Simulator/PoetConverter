@@ -1,5 +1,7 @@
 #include "HDF5Writer.hpp"
+#include "QS2Reader.hpp"
 #include "SimFileList.hpp"
+#include "XMLWriter.hpp"
 
 #include <filesystem>
 #include <print>
@@ -16,14 +18,27 @@ int main(int argc, char *argv[]) {
 
     // Compute default output path: <simDirectory>.h5 in current working dir
     std::string baseName = simList.getBaseName();
-    std::string outputPath = baseName + ".h5";
+    std::string h5path = baseName + ".h5";
+    std::string xdmf_path = baseName + ".xdmf";
 
     std::println("Simulation Directory: {}", simList.getDirectoryPath());
     std::println("Base Name: {}", baseName);
-    std::println("Output HDF5: {}", outputPath);
+    std::println("Output HDF5: {}", h5path);
 
     // Write HDF5 using HighFive
-    HDF5Writer::write(simDirectory, outputPath, 400, 400);
+
+    HDF5Writer h5writer(h5path, 400, 400);
+    for (const auto &iterFile : simList.getIterationFiles()) {
+      int iterNum = iterFile.first;
+      const std::string &filePath = iterFile.second;
+      QS2Reader reader(filePath, 400, 400);
+      auto columns = reader.read();
+      h5writer.addDataset(iterNum, columns);
+    }
+
+    // HDF5Writer::write(simDirectory, h5path, 400, 400);
+    // XMLWriter::write(xdmf_path, simDirectory, simList.getIterationNumbers(),
+    //                  simList.getElementNames(), 400, 400);
 
     std::println("HDF5 write completed successfully.");
   } catch (const std::exception &e) {
