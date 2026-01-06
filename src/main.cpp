@@ -28,19 +28,25 @@ int main(int argc, char *argv[]) {
     // Write HDF5 using HighFive
 
     HDF5Writer h5writer(h5path, 400, 400);
+    XMLWriter xmlwriter(xdmf_path, h5path);
     for (const auto &iterFile : simList.getIterationFiles()) {
       int iterNum = iterFile.first;
       const std::string &filePath = iterFile.second;
       QS2Reader reader(filePath, 400, 400);
       auto columns = reader.read();
       h5writer.addDataset(iterNum, columns);
+
+      // Write XDMF XML file
+      xmlwriter.addDataset(iterNum, columns, 400, 400);
     }
 
     // HDF5Writer::write(simDirectory, h5path, 400, 400);
     // XMLWriter::write(xdmf_path, simDirectory, simList.getIterationNumbers(),
     //                  simList.getElementNames(), 400, 400);
 
-    std::println("HDF5 write completed successfully.");
+    // std::println("HDF5 write completed successfully.");
+    xmlwriter.save();
+    std::println("XDMF write completed successfully.");
   } catch (const std::exception &e) {
     std::println(stderr, "Error: {}", e.what());
     return 1;
