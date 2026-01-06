@@ -8,11 +8,6 @@
 QS2Reader::QS2Reader(const std::string &filePath, int rows, int cols)
     : filePath_(filePath), rows_(rows), cols_(cols) {}
 
-void QS2Reader::setDimensions(int rows, int cols) {
-  rows_ = rows;
-  cols_ = cols;
-}
-
 int QS2Reader::extractIterationNumber(const std::string &filename) {
   // Extract number from "iter_XXXXX.qs2"
   std::regex iter_regex(R"(iter_(\d+)\.qs2)");
