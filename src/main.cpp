@@ -1,47 +1,31 @@
-#include "QS2Reader.hpp"
+#include "HDF5Writer.hpp"
 #include "SimFileList.hpp"
 
+#include <filesystem>
 #include <print>
 #include <string>
 
 int main(int argc, char *argv[]) {
-  // Example usage
+  // Simulation directory (contains iter_*.qs2) and output .h5 path
   std::string simDirectory =
       argc > 1 ? argv[1] : "dolo_fgcs_3_skip"; // Default directory
 
   try {
-    // Create SimFileList object for the simulation directory
+    // Discover iterations first (also validates directory)
     SimFileList simList(simDirectory);
 
-    // Display directory information
+    // Compute default output path: <simDirectory>.h5 in current working dir
+    std::string baseName = simList.getBaseName();
+    std::string outputPath = baseName + ".h5";
+
     std::println("Simulation Directory: {}", simList.getDirectoryPath());
-    std::println("Base Name: {}", simList.getBaseName());
+    std::println("Base Name: {}", baseName);
+    std::println("Output HDF5: {}", outputPath);
 
-    // Get all iteration files
-    const auto &iterFiles = simList.getIterationFiles();
-    std::println("\nFound {} iteration files:\n", iterFiles.size());
+    // Write HDF5 using HighFive
+    HDF5Writer::write(simDirectory, outputPath, 400, 400);
 
-    // Display iteration files
-    for (const auto &[iterNum, filePath] : iterFiles) {
-      std::println("  Iteration {}: {}", iterNum, filePath);
-    }
-
-    for (int iteration : {0, 1}) {
-      QS2Reader reader(iterFiles.at(iteration), 400, 400);
-      auto data = reader.read();
-      std::println("\nData from iteration {}:", iteration);
-      for (const auto &[key, values] : data) {
-        std::println("  Key: {}, Data Size: {}", key, values.size());
-      }
-    }
-
-    // // Example: Create Iteration objects
-    // std::println("\nCreating Iteration objects:");
-    // for (const auto &[iterNum, filePath] : iterFiles) {
-    //   std::println("  Created Iteration #{}", iterNum);
-    //   // Later we can load data: iter.getSimData()
-    // }
-
+    std::println("HDF5 write completed successfully.");
   } catch (const std::exception &e) {
     std::println(stderr, "Error: {}", e.what());
     return 1;
