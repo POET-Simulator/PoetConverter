@@ -10,9 +10,9 @@ file_path = "dolo_fgcs_3_skip"
 h5_filename = file_path * ".h5"
 xdmf_filename = file_path * ".xdmf"
 
-# Grid settings (Adjust these if your simulation has specific physical dimensions)
-# Assuming a 2D grid based on the 400x400 dimension in the image
-origin = [400, 400]   # X, Y origin
+# Grid settings (adjust these if your simulation has specific physical dimensions)
+# Assuming a 2D grid; adjust if your simulation or data uses different dimensions
+origin = [0.0, 0.0]   # X, Y origin
 spacing = [1.0, 1.0]  # dx, dy
 
 # --- Helper Function: Sort Iterations ---
@@ -102,10 +102,16 @@ function create_xdmf()
     # We look for a known species like "C" or just the first valid dataset
     first_group = h5f[iter_groups[1]]
     # Pick the first dataset key to check dims
-    sample_ds_name = keys(first_group)[1]
+    ds_keys = collect(keys(first_group))
+    if isempty(ds_keys)
+        println("Error: First iteration group $(iter_groups[1]) contains no datasets.")
+        close(h5f)
+        return
+    end
+    sample_ds_name = ds_keys[1]
     sample_ds = first_group[sample_ds_name]
     # HDF5.jl reads dims as (X, Y) usually, but XDMF writes "Y X" (row-major)
-    # The image shows "400 x 400".
+    # Extract dimensions from the dataset
     dims = size(sample_ds)
     # Format dimensions string for XDMF (reverse for standard C-order visualization if needed, 
     # but for 400x400 it looks the same. XDMF usually wants "NY NX")
@@ -182,7 +188,7 @@ function create_xdmf()
             data_item["Format"] = "HDF"
             data_item["Dimensions"] = dim_str
             # Precision can be detected, but 8 (double) or 4 (float) is standard. 
-            # The image says "64-bit floating-point", so precision is 8.
+            # Using 8 for 64-bit floating-point (double precision)
             data_item["NumberType"] = "Float"
             data_item["Precision"] = "8"
 
