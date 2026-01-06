@@ -80,10 +80,6 @@ int main(int argc, char *argv[]) {
       xmlwriter.addDataset(iterNum, columns, rows, cols);
     }
 
-    // HDF5Writer::write(simDirectory, h5path, 400, 400);
-    // XMLWriter::write(xdmf_path, simDirectory, simList.getIterationNumbers(),
-    //                  simList.getElementNames(), 400, 400);
-
     xmlwriter.save();
     std::println("XDMF write completed successfully.");
   } catch (const std::exception &e) {
