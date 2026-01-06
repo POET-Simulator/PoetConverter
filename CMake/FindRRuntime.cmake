@@ -52,7 +52,7 @@ execute_process(COMMAND Rscript -e "cat(system.file(package='RInside'))"
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
-if(RInside_NOT_FOUND)
+if(RINSIDE_NOT_FOUND)
   message(FATAL_ERROR "RInside not found!")
 endif()
 
