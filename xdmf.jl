@@ -5,8 +5,8 @@ using HDF5
 h5_filename = "dolo_fgcs_3_skip.h5"
 xdmf_filename = "dolo_fgcs_3_skip.xmf"
 
-# Grid settings (Adjust these if your simulation has specific physical dimensions)
-# Default values for a 2D grid with unit spacing
+# Grid settings (adjust these if your simulation has specific physical dimensions)
+# Assuming a 2D grid; adjust if your simulation or data uses different dimensions
 origin = [0.0, 0.0]   # X, Y origin
 spacing = [1.0, 1.0]  # dx, dy
 
