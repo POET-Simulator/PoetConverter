@@ -44,7 +44,13 @@ function create_xdmf()
     # We look for a known species like "C" or just the first valid dataset
     first_group = h5f[iter_groups[1]]
     # Pick the first dataset key to check dims
-    sample_ds_name = keys(first_group)[1]
+    ds_keys = collect(keys(first_group))
+    if isempty(ds_keys)
+        println("Error: First iteration group $(iter_groups[1]) contains no datasets.")
+        close(h5f)
+        return
+    end
+    sample_ds_name = ds_keys[1]
     sample_ds = first_group[sample_ds_name]
     # HDF5.jl reads dims as (X, Y) usually, but XDMF writes "Y X" (row-major)
     # Extract dimensions from the dataset
