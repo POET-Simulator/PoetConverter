@@ -1,13 +1,18 @@
 using EzXML
 using HDF5
+using RCall
+using DataFrames
+
+@rlibrary qs2
 
 # --- Configuration ---
-h5_filename = "dolo_fgcs_3_skip.h5"
-xdmf_filename = "dolo_fgcs_3_skip.xmf"
+file_path = "dolo_fgcs_3_skip"
+h5_filename = file_path * ".h5"
+xdmf_filename = file_path * ".xdmf"
 
 # Grid settings (Adjust these if your simulation has specific physical dimensions)
 # Assuming a 2D grid based on the 400x400 dimension in the image
-origin = [0.0, 0.0]   # X, Y origin
+origin = [400, 400]   # X, Y origin
 spacing = [1.0, 1.0]  # dx, dy
 
 # --- Helper Function: Sort Iterations ---
@@ -15,6 +20,59 @@ spacing = [1.0, 1.0]  # dx, dy
 function get_iteration_number(name)
     m = match(r"iteration_(\d+)", name)
     return m === nothing ? nothing : parse(Int, m.captures[1])
+end
+
+function qs2_to_df(file_path::String, iteration::Int)::DataFrame
+    content = qs_read(file_path)
+
+    if iteration == 0
+        return rcopy(content)
+    else
+        return rcopy(content["C"])
+    end
+end
+
+
+# function, that retrieves a direcotry and list all files starting with iter_ and ends with .qs2
+function list_iteration_files(dir_path)
+    files = readdir(dir_path)
+    iter_files = Dict{Int,String}()
+
+    for file in files
+        if startswith(file, "iter_") && endswith(file, ".qs2")
+            m = match(r"iter_(\d+)\.qs2", file)
+            if m !== nothing
+                iter_num = parse(Int, m.captures[1])
+                iter_files[iter_num] = joinpath(dir_path, file)
+            end
+        end
+    end
+
+    return iter_files
+end
+
+function create_h5()
+    h5f = h5open(h5_filename, "w")
+
+    # find all iterations in path 
+    iter_files = list_iteration_files(file_path)
+
+    for (iter_num, file_path) in iter_files
+        df = qs2_to_df(file_path, iter_num)
+
+        group_name = "iteration_$iter_num"
+        g = create_group(h5f, group_name)
+
+        for col in names(df)
+            data = df[!, col]
+            # Reshape data to 2D array (400, 400)
+            data = permutedims(reshape(data, origin...))
+
+            g[string(col), shuffle=(), deflate=3] = data
+        end
+    end
+
+    close(h5f)
 end
 
 # --- Main Processing ---
@@ -140,4 +198,5 @@ function create_xdmf()
     close(h5f)
 end
 
+create_h5()
 create_xdmf()
