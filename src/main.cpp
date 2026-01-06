@@ -12,7 +12,6 @@
 #include "SimFileList.hpp"
 #include "XMLWriter.hpp"
 
-#include <CLI/CLI.hpp>
 #include <print>
 #include <string>
 
@@ -85,7 +84,6 @@ int main(int argc, char *argv[]) {
     // XMLWriter::write(xdmf_path, simDirectory, simList.getIterationNumbers(),
     //                  simList.getElementNames(), 400, 400);
 
-    // std::println("HDF5 write completed successfully.");
     xmlwriter.save();
     std::println("XDMF write completed successfully.");
   } catch (const std::exception &e) {
