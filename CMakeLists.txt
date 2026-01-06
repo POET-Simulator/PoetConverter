@@ -10,21 +10,21 @@ include(FetchContent)
 FetchContent_Declare(
     tinyxml2
     GIT_REPOSITORY https://github.com/leethomason/tinyxml2.git
-    GIT_TAG        11.0.0
+    GIT_TAG        9148bdf
 )
 
 FetchContent_Declare(
   highfive
   QUIET
   GIT_REPOSITORY https://github.com/highfive-devs/highfive.git
-  GIT_TAG v3.2.0
+  GIT_TAG be0ddb3
 )
 
 FetchContent_Declare(
     cli11
     QUIET
     GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
-    GIT_TAG v2.6.1
+    GIT_TAG bfffd37
 )
 
 FetchContent_MakeAvailable(tinyxml2)
