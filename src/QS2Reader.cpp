@@ -10,7 +10,7 @@ QS2Reader::QS2Reader(const std::string &filePath, int rows, int cols)
 
 int QS2Reader::extractIterationNumber(const std::string &filename) {
   // Extract number from "iter_XXXXX.qs2"
-  std::regex iter_regex(R"(iter_(\d+)\.qs2)");
+  static const std::regex iter_regex(R"(iter_(\d+)\.qs2)");
   std::smatch match;
 
   if (std::regex_search(filename, match, iter_regex) && match.size() > 1) {
