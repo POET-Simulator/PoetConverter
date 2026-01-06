@@ -40,7 +40,7 @@ std::vector<int> SimFileList::getIterationNumbers() const {
 void SimFileList::loadIterationFiles() {
   // Regular expression to match iter_*.qs2 files and extract the iteration
   // number Pattern: iter_<digits>.qs2
-  std::regex iterPattern(R"(iter_(\d+)\.qs2)");
+  static std::regex iterPattern(R"(iter_(\d+)\.qs2)");
 
   for (const auto &entry : fs::directory_iterator(directoryPath)) {
     if (entry.is_regular_file()) {
