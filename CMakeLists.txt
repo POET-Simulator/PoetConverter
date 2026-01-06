@@ -29,5 +29,6 @@ find_package(RRuntime REQUIRED)
 add_executable(poet2paraview 
   src/main.cpp 
   src/SimFileList.cpp
+  src/QS2Reader.cpp
 )
 target_link_libraries(poet2paraview PRIVATE tinyxml2::tinyxml2 RRuntime HighFive::HighFive)

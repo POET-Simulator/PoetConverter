@@ -1,3 +1,4 @@
+#include "QS2Reader.hpp"
 #include "SimFileList.hpp"
 
 #include <print>
@@ -23,6 +24,15 @@ int main(int argc, char *argv[]) {
     // Display iteration files
     for (const auto &[iterNum, filePath] : iterFiles) {
       std::println("  Iteration {}: {}", iterNum, filePath);
+    }
+
+    for (int iteration : {0, 1}) {
+      QS2Reader reader(iterFiles.at(iteration), 400, 400);
+      auto data = reader.read();
+      std::println("\nData from iteration {}:", iteration);
+      for (const auto &[key, values] : data) {
+        std::println("  Key: {}, Data Size: {}", key, values.size());
+      }
     }
 
     // // Example: Create Iteration objects
