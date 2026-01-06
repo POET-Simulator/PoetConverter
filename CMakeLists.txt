@@ -20,8 +20,16 @@ FetchContent_Declare(
   GIT_TAG v3.2.0
 )
 
+FetchContent_Declare(
+    cli11
+    QUIET
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
+    GIT_TAG v2.6.1
+)
+
 FetchContent_MakeAvailable(tinyxml2)
 FetchContent_MakeAvailable(highfive)
+FetchContent_MakeAvailable(cli11)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
 find_package(RRuntime REQUIRED)
@@ -33,4 +41,5 @@ add_executable(poet2paraview
   src/HDF5Writer.cpp
   src/XMLWriter.cpp
 )
-target_link_libraries(poet2paraview PRIVATE tinyxml2::tinyxml2 RRuntime HighFive::HighFive)
+
+target_link_libraries(poet2paraview PRIVATE tinyxml2::tinyxml2 RRuntime HighFive::HighFive CLI11::CLI11)

@@ -1,16 +1,32 @@
+#include "CLI/CLI.hpp"
 #include "HDF5Writer.hpp"
 #include "QS2Reader.hpp"
 #include "SimFileList.hpp"
 #include "XMLWriter.hpp"
 
-#include <filesystem>
+#include <CLI/CLI.hpp>
 #include <print>
 #include <string>
 
 int main(int argc, char *argv[]) {
-  // Simulation directory (contains iter_*.qs2) and output .h5 path
-  std::string simDirectory =
-      argc > 1 ? argv[1] : "dolo_fgcs_3_skip"; // Default directory
+  std::string simDirectory;
+  int rows;
+  int cols;
+
+  CLI::App app{"POET to ParaView Converter"};
+  app.add_option("input_dir", simDirectory, "Simulation directory")
+      ->required()
+      ->check(CLI::ExistingDirectory);
+
+  app.add_option("rows", rows, "Number of rows in the simulation grid")
+      ->required()
+      ->check(CLI::PositiveNumber);
+
+  app.add_option("cols", cols, "Number of columns in the simulation grid")
+      ->required()
+      ->check(CLI::PositiveNumber);
+
+  CLI11_PARSE(app, argc, argv);
 
   try {
     // Discover iterations first (also validates directory)
@@ -27,17 +43,17 @@ int main(int argc, char *argv[]) {
 
     // Write HDF5 using HighFive
 
-    HDF5Writer h5writer(h5path, 400, 400);
+    HDF5Writer h5writer(h5path, rows, cols);
     XMLWriter xmlwriter(xdmf_path, h5path);
     for (const auto &iterFile : simList.getIterationFiles()) {
       int iterNum = iterFile.first;
       const std::string &filePath = iterFile.second;
-      QS2Reader reader(filePath, 400, 400);
+      QS2Reader reader(filePath, rows, cols);
       auto columns = reader.read();
       h5writer.addDataset(iterNum, columns);
 
       // Write XDMF XML file
-      xmlwriter.addDataset(iterNum, columns, 400, 400);
+      xmlwriter.addDataset(iterNum, columns, rows, cols);
     }
 
     // HDF5Writer::write(simDirectory, h5path, 400, 400);
