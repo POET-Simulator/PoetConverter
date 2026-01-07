@@ -68,7 +68,7 @@ void XMLWriter::addDataset(
   spacing->SetAttribute("Dimensions", "2");
   spacing->SetAttribute("NumberType", "Float");
   spacing->SetAttribute("Format", "XML");
-  spacing->SetText("1.0 1.0"); // Assuming unit spacing
+  spacing->SetText("1.0 -1.0"); // Assuming unit spacing
   geometry->InsertEndChild(spacing);
 
   grid->InsertEndChild(geometry);
